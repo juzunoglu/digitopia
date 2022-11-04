@@ -1,11 +1,13 @@
 package com.example.demo.model;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Set;
 
 public record OrganizationDTO(
 
@@ -44,9 +46,10 @@ public record OrganizationDTO(
         @Schema(description = "The phone number of the Organization",
                 name = "phone",
                 required = false,
-                example = "+90 552 789 48 54",
+                example = "+905527894854",
                 type = "string"
         )
+        // todo boşluklu tel kabul etmedi, buna bi bak fazladan slash var çok büyük ihtimalle
         @Pattern(regexp = "^\\s*(?:\\+?(\\d{1,3}))?[-. (]*(\\d{3})[-. )]*(\\d{3})[-. ]*(\\d{4})(?: *x(\\d+))?\\s*$", message = "Please enter a valid phone number")
         String phone,
 
@@ -56,9 +59,16 @@ public record OrganizationDTO(
                 example = "50",
                 type = "number"
         )
-        Long companySize
+        Long companySize,
 
-
+        @ArraySchema(
+                schema = @Schema(
+                        description = "List of users that belongs to the organization",
+                        required = false,
+                        implementation = UserDTO.class),
+                uniqueItems = true
+        )
+        Set<UserDTO> users
 
 ) {
 }

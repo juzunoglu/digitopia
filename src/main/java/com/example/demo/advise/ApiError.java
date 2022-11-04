@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +19,6 @@ public class ApiError {
     private LocalDateTime timestamp;
     private HttpStatus status;
     private String message;
-    private List errors;
+    private List<?> errors;
 }
 

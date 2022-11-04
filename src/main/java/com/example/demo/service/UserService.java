@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface UserService {
     User getByUserId(String id);
 
     List<User> getAllUsers();
+
+    List<Organization> getAllOrganizationsForUser(String userId);
 }

@@ -1,12 +1,12 @@
 package com.example.demo.entity;
 
 import com.example.demo.entity.enums.User_Status;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -43,6 +43,7 @@ public class User extends BaseEntity {
     @ManyToMany(mappedBy = "userSet", fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
+    @Schema(hidden = true)
     private Set<Organization> organizationSet = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -51,6 +52,7 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "invitation_id", referencedColumnName = "id")
     )
     @ToString.Exclude
+    @Schema(hidden = true)
     private Invitation invitation;
 
     public void addOrganization(Organization organization) {

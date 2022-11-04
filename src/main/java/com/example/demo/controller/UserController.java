@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.converter.UserConverter;
+import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
 import com.example.demo.model.UserDTO;
 import com.example.demo.service.UserService;
@@ -54,10 +55,17 @@ public class UserController {
         );
     }
 
-    @Operation(summary = "get all users")
+    @Operation(summary = "Get all users")
     @GetMapping(path = "/all")
     public ResponseEntity<List<User>> getAllUsers() {
         log.info("getAllUsers is called");
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Returns all organizations that a user belongs to")
+    @GetMapping(path = "/{userId}/organizations")
+    public ResponseEntity<List<Organization>> getAllOrganizationThatUserBelongs(@PathVariable String userId) {
+        log.info("getAllOrganizationThatUserBelongs is called with userId: {}", userId);
+        return new ResponseEntity<>(userService.getAllOrganizationsForUser(userId), HttpStatus.OK);
     }
 }

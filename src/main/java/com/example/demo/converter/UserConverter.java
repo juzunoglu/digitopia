@@ -6,7 +6,7 @@ import com.example.demo.model.UserDTO;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 public class UserConverter {
 
@@ -25,6 +25,26 @@ public class UserConverter {
                 .email(userDTO.email())
                 .normalizedName(normalizeName(userDTO.fullName()))
                 .build();
+    }
+
+    public static Set<User> convertToEntity(Set<UserDTO> userDTOS) {
+        Set<User> result = new HashSet<>();
+
+        userDTOS.forEach(userDTO -> {
+            String userId = UUID.randomUUID().toString();
+            User user = User.builder()
+                    .id(userId)
+                    .createdOn(LocalDateTime.now())
+                    .createdBy(userId)
+                    .fullName(userDTO.fullName())
+                    .status(User_Status.ACTIVE)
+                    .email(userDTO.email())
+                    .normalizedName(normalizeName(userDTO.fullName()))
+                    .build();
+
+            result.add(user);
+        });
+        return result;
     }
 
     private static String normalizeName(String fullName) { // todo?

@@ -1,10 +1,7 @@
 package com.example.demo.converter;
 
 import com.example.demo.entity.Organization;
-import com.example.demo.entity.User;
-import com.example.demo.entity.enums.User_Status;
 import com.example.demo.model.OrganizationDTO;
-import com.example.demo.model.UserDTO;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
@@ -22,6 +19,7 @@ public class OrganizationConverter {
                 .id(organizationId)
                 .createdOn(LocalDateTime.now())
                 .createdBy(organizationId)
+                .userSet(UserConverter.convertToEntity(organizationDTO.users()))
                 .name(organizationDTO.organizationName())
                 .normalizedName(normalizeName(organizationDTO.organizationName()))
                 .registryNumber(organizationDTO.registryNumber())

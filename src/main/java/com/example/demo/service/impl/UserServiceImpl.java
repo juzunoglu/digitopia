@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
 import com.example.demo.entity.enums.User_Status;
 import com.example.demo.exception.ResourceNotFoundException;
@@ -59,5 +60,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
         return userRepo.findAll(); // todo do a pagination later
+    }
+
+    @Override
+    public List<Organization> getAllOrganizationsForUser(String userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User is not found"));
+        return user.getOrganizationSet().stream().toList();
     }
 }
