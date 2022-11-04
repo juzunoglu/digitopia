@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.converter.OrganizationConverter;
 import com.example.demo.entity.Organization;
+import com.example.demo.entity.User;
 import com.example.demo.model.OrganizationDTO;
 import com.example.demo.service.OrganizationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "api/v1/organization")
@@ -59,5 +61,12 @@ public class OrganizationController {
     public ResponseEntity<List<Organization>> getAllOrganizations() {
         log.info("getAllOrganizations is called");
         return new ResponseEntity<>(organizationService.getAllOrganizations(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Return all users under an organization")
+    @GetMapping(path = "/{organizationId}/users")
+    public ResponseEntity<Set<User>> getAllUsersUnderAnOrganization(@PathVariable String organizationId) {
+        log.info("getAllUsersUnderAnOrganization is called with : {}", organizationId);
+        return new ResponseEntity<>(organizationService.usersUnderOrganization(organizationId), HttpStatus.OK);
     }
 }

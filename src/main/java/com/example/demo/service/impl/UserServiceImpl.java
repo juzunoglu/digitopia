@@ -8,10 +8,12 @@ import com.example.demo.repo.UserRepo;
 import com.example.demo.service.UserService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
@@ -27,11 +29,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteByUserId(String id) {
-        User user = userRepo.findById(id)
+        User user = userRepo.findNonDeletedUser(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User is not found"));
 
         user.setStatus(User_Status.DELETED);
-        user.setOrganizationSet(null); // todo
+//        user.removeOrganization(user.getOrganizationSet()); // todo
+        user.setOrganizationSet(null);
         user.setInvitation(null);
         userRepo.save(user);
         // todo delete organization?

@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Organization;
+import com.example.demo.entity.User;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repo.OrganizationRepo;
 import com.example.demo.service.OrganizationService;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -62,5 +64,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public List<Organization> getAllOrganizations() {
         return organizationRepo.findAll();
+    }
+
+    @Override
+    public Set<User> usersUnderOrganization(String organizationId) {
+        return organizationRepo.findById(organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Organization is not found"))
+                .getUserSet();
     }
 }

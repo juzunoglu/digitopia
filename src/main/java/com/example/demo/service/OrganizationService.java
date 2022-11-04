@@ -1,8 +1,10 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Organization;
+import com.example.demo.entity.User;
 
 import java.util.List;
+import java.util.Set;
 
 public interface OrganizationService {
 
@@ -15,4 +17,6 @@ public interface OrganizationService {
     Organization getById(String id);
 
     List<Organization> getAllOrganizations();
+
+    Set<User> usersUnderOrganization(String organizationId);
 }

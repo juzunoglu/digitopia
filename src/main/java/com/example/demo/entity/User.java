@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.example.demo.entity.enums.User_Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -44,6 +45,7 @@ public class User extends BaseEntity {
     @Builder.Default
     @ToString.Exclude
     @Schema(hidden = true)
+    @JsonIgnore
     private Set<Organization> organizationSet = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
