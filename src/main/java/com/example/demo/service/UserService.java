@@ -17,4 +17,8 @@ public interface UserService {
     List<User> getAllUsers();
 
     List<Organization> getAllOrganizationsForUser(String userId);
+
+    User searchByEmail(String email);
+
+    List<User> searchByNormalizedName(String normalizedName);
 }

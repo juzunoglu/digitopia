@@ -41,31 +41,22 @@ public class User extends BaseEntity {
     @Column(name = "normalized_name")
     private String normalizedName;
 
-    @ManyToMany(mappedBy = "userSet", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "userSet", fetch = FetchType.LAZY, cascade = {
+            CascadeType.MERGE,
+            CascadeType.PERSIST
+    })
     @Builder.Default
     @ToString.Exclude
     @Schema(hidden = true)
     @JsonIgnore
     private Set<Organization> organizationSet = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "user_invitation",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "invitation_id", referencedColumnName = "id")
-    )
-    @ToString.Exclude
-    @Schema(hidden = true)
-    private Invitation invitation;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "invitation_id", unique = true)
+//    @ToString.Exclude
+//    @Schema(hidden = true)
+//    private Invitation invitation;
 
-    public void addOrganization(Organization organization) {
-        this.organizationSet.add(organization);
-        organization.getUserSet().add(this);
-    }
-
-    public void removeOrganization(Organization organization) {
-        this.organizationSet.remove(organization);
-        organization.getUserSet().remove(this);
-    }
 
     @Override
     public boolean equals(Object o) {

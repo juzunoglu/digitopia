@@ -68,4 +68,18 @@ public class UserController {
         log.info("getAllOrganizationThatUserBelongs is called with userId: {}", userId);
         return new ResponseEntity<>(userService.getAllOrganizationsForUser(userId), HttpStatus.OK);
     }
+
+    @Operation(summary = "Search by email to return a single user")
+    @GetMapping(path = "/searchByEmail")
+    public ResponseEntity<User> searchByEmail(@RequestParam String email) {
+        log.info("searchByEmail is called with: {}", email);
+        return new ResponseEntity<>(userService.searchByEmail(email), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Search by normalized name to return matching users")
+    @GetMapping(path = "/searchByNormalizedName")
+    public ResponseEntity<List<User>> searchByNormalizedName(@RequestParam String normalizedName) {
+        log.info("searchByNormalizedName is called with: {}", normalizedName);
+        return new ResponseEntity<>(userService.searchByNormalizedName(normalizedName), HttpStatus.OK);
+    }
 }

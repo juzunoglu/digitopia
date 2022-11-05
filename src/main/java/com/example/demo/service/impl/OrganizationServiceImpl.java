@@ -33,7 +33,6 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Organization is not found"));
 
-//        organization.removeUser(organization.getUserSet()); todo
         organizationRepo.delete(organization);
         return true;
     }

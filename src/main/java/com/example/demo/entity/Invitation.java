@@ -23,7 +23,9 @@ public class Invitation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Invitation_Status invitationStatus;
 
-    @OneToOne(mappedBy = "invitation")
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @ToString.Exclude
     private User user;
 
     @Override

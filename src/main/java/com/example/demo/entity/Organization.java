@@ -1,13 +1,11 @@
 package com.example.demo.entity;
 
 
-import com.example.demo.util.Phone;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
@@ -60,16 +58,9 @@ public class Organization extends BaseEntity {
     @Builder.Default
     @ToString.Exclude
     private Set<User> userSet = new HashSet<>();
-
-
     public void addUser(User user) {
         this.userSet.add(user);
         user.getOrganizationSet().add(this);
-    }
-
-    public void removeUser(User user) {
-        this.userSet.remove(user);
-        user.getOrganizationSet().remove(this);
     }
 
     @Override

@@ -18,6 +18,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
 
+
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
@@ -30,21 +31,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteByUserId(String id) {
         User user = userRepo.findNonDeletedUser(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User is not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User is not found with id: " + id));
 
         user.setStatus(User_Status.DELETED);
-//        user.removeOrganization(user.getOrganizationSet()); // todo
-        user.setOrganizationSet(null);
-        user.setInvitation(null);
         userRepo.save(user);
-        // todo delete organization?
         return true;
     }
 
     @Override
     public User updateByUserId(String id, User user) {
         User toBeUpdated = userRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User is not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User is not found with id: " + id));
 
         toBeUpdated.setFullName(user.getFullName());
         // todo cannot use the already existing email. they should be unique
@@ -57,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByUserId(String id) {
         return userRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User is not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User is not found with id: " + id));
     }
 
     @Override
@@ -68,7 +65,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Organization> getAllOrganizationsForUser(String userId) {
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User is not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User is not found with id: " + userId));
         return user.getOrganizationSet().stream().toList();
+    }
+
+    @Override
+    public User searchByEmail(String email) {
+        return userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User is not found with email: " + email));
+    }
+
+    @Override
+    public List<User> searchByNormalizedName(String normalizedName) {
+        return userRepo.findByFullNameContainsIgnoreCase(normalizedName); // -> bad solution, actually needs lucene/elastichsearch/solr but no time
     }
 }

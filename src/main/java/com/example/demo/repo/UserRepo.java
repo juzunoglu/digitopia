@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +16,10 @@ public interface UserRepo extends JpaRepository<User, String> {
 
     @Query(value = "SELECT * FROM users u where u.id = :userId AND u.status = 'ACTIVE'", nativeQuery = true)
     Optional<User> findNonDeletedUser(@Param("userId") String userId);
+
+    Optional<User> findByEmail(String email);
+
+    List<User> findByFullNameContainsIgnoreCase(String fullName);
+
+
 }
