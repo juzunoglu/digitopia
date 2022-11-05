@@ -1,6 +1,7 @@
 package com.example.demo.advise;
 
 import com.example.demo.exception.EmailAlreadyExistsException;
+import com.example.demo.exception.InvitationAlreadyRejectedException;
 import com.example.demo.exception.RegistryNumberAlreadyExistsException;
 import com.example.demo.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +97,23 @@ public class GlobalControllerException extends ResponseEntityExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST,
                 "Unique Key Error",
+                details);
+
+        return ResponseEntityBuilder.build(err);
+    }
+
+    @ExceptionHandler(InvitationAlreadyRejectedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleEmailAlreadyExistsException(
+            InvitationAlreadyRejectedException ex) {
+
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+
+        ApiError err = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST,
+                "State Error",
                 details);
 
         return ResponseEntityBuilder.build(err);

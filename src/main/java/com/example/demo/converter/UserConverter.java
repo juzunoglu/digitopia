@@ -28,6 +28,12 @@ public class UserConverter {
                 .build();
     }
 
+    public static User convertToEntity(String userId) {
+        return User.builder()
+                .id(userId)
+                .build();
+    }
+
     public static Set<User> convertToEntity(Set<UserDTO> userDTOS) {
         Set<User> result = new HashSet<>();
 

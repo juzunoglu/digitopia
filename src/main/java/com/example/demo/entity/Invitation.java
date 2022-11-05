@@ -23,7 +23,7 @@ public class Invitation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Invitation_Status invitationStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId
     @ToString.Exclude
     private User user;

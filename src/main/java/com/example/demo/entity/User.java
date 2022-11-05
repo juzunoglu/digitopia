@@ -51,13 +51,6 @@ public class User extends BaseEntity {
     @JsonIgnore
     private Set<Organization> organizationSet = new HashSet<>();
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "invitation_id", unique = true)
-//    @ToString.Exclude
-//    @Schema(hidden = true)
-//    private Invitation invitation;
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
