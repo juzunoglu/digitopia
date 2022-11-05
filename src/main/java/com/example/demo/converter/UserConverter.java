@@ -4,9 +4,10 @@ import com.example.demo.entity.User;
 import com.example.demo.entity.enums.User_Status;
 import com.example.demo.model.UserDTO;
 
-import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.example.demo.model.UserDTO.normalizeName;
 
 public class UserConverter {
 
@@ -45,12 +46,5 @@ public class UserConverter {
             result.add(user);
         });
         return result;
-    }
-
-    private static String normalizeName(String fullName) { // todo?
-        return Normalizer.normalize(fullName, Normalizer.Form.NFD)
-                .replaceAll("\\d", "") // remove all numbers
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase(); // remove accents
-
     }
 }

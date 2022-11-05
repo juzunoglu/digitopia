@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.text.Normalizer;
 import java.util.Date;
 import java.util.Set;
 
@@ -71,4 +72,11 @@ public record OrganizationDTO(
         Set<UserDTO> users
 
 ) {
+
+    public static String normalizeCompanyName(String companyName) { // todo?
+        return Normalizer.normalize(companyName, Normalizer.Form.NFD)
+                .replaceAll("\\d", "") // remove all numbers
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase(); // remove accents
+
+    }
 }

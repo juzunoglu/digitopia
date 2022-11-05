@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -19,4 +20,9 @@ public interface OrganizationService {
     List<Organization> getAllOrganizations();
 
     Set<User> usersUnderOrganization(String organizationId);
+
+    Organization findByRegistryNumber(String registryNumber);
+
+    List<Organization> searchByNormalizedNameYearSize(String normalizedName, Date year, Long size);
+
 }

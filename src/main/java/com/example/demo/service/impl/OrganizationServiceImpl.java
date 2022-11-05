@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -70,5 +71,16 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepo.findById(organizationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Organization is not found"))
                 .getUserSet();
+    }
+
+    @Override
+    public Organization findByRegistryNumber(String registryNumber) {
+        return organizationRepo.findByRegistryNumber(registryNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Organization is not found"));
+    }
+
+    @Override
+    public List<Organization> searchByNormalizedNameYearSize(String normalizedName, Date year, Long size) {
+        return organizationRepo.findByNormalizedNameContainsIgnoreCaseOrYearFoundedOrCompanySize(normalizedName, year, size);
     }
 }

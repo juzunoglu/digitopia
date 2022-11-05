@@ -77,6 +77,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> searchByNormalizedName(String normalizedName) {
-        return userRepo.findByFullNameContainsIgnoreCase(normalizedName); // -> bad solution, actually needs lucene/elastichsearch/solr but no time
+        return userRepo.findByNormalizedNameContainsIgnoreCase(normalizedName); // -> bad solution, actually needs lucene/elastichsearch/solr but no time
     }
 }

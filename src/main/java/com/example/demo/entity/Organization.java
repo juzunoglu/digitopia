@@ -18,7 +18,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@Table(name = "organization", uniqueConstraints = {
+@Table(name = "organization", indexes = {
+        @Index(name = "idx_normalized_name_year_size", columnList = "normalized_name, year_founded, company_size"),
+        @Index(name = "idx_registry_number", columnList = "registry_number")
+}, uniqueConstraints = {
         @UniqueConstraint(columnNames = "contact_email", name = "constraint_unique_email"),
         @UniqueConstraint(columnNames = "registry_number", name = "constraint_unique_registry_number")
 })
@@ -51,13 +54,14 @@ public class Organization extends BaseEntity {
             CascadeType.PERSIST
     })
     @JoinTable(
-            name="user_organization",
+            name = "user_organization",
             joinColumns = @JoinColumn(name = "organization_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     @Builder.Default
     @ToString.Exclude
     private Set<User> userSet = new HashSet<>();
+
     public void addUser(User user) {
         this.userSet.add(user);
         user.getOrganizationSet().add(this);

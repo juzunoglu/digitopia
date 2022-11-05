@@ -16,6 +16,8 @@ import java.util.*;
 
 import static com.example.demo.helper.Helper.randomEmailGenerator;
 import static com.example.demo.helper.Helper.randomNameGenerator;
+import static com.example.demo.model.OrganizationDTO.normalizeCompanyName;
+import static com.example.demo.model.UserDTO.normalizeName;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -79,7 +81,6 @@ public class UserRepositoryTest {
 
         userService.updateByUserId(oldUser.getId(), newUser);
         User updatedUser = userService.getByUserId(oldUser.getId());
-        System.out.println(updatedUser);
         assertEquals("faruk", updatedUser.getFullName());
     }
 
@@ -89,7 +90,7 @@ public class UserRepositoryTest {
         for (int i = 0; i < 20; i++) {
             createUser(randomNameGenerator(), randomEmailGenerator());
         }
-        assertEquals(20, userRepo.findAll().size());
+        assertEquals(20, userService.getAllUsers().size());
     }
 
     @Test
@@ -134,7 +135,7 @@ public class UserRepositoryTest {
                 .status(User_Status.ACTIVE)
                 .email(email)
                 .fullName(fullName)
-                .normalizedName(fullName)
+                .normalizedName(normalizeName(fullName))
                 .build();
 
         return userService.saveUser(user);
@@ -147,6 +148,8 @@ public class UserRepositoryTest {
         Organization organization = Organization.builder()
                 .id(UUID.randomUUID().toString())
                 .registryNumber(registryNumber)
+                .name(name)
+                .normalizedName(normalizeCompanyName(name))
                 .contactEmail(email)
                 .userSet(Set.of(user1, user2))
                 .yearFounded(new Date())
