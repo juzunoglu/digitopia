@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.converter.OrganizationConverter;
+import com.example.demo.converter.UserConverter;
 import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
 import com.example.demo.model.OrganizationDTO;
+import com.example.demo.model.UserDTO;
 import com.example.demo.service.OrganizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
@@ -68,5 +70,19 @@ public class OrganizationController {
     public ResponseEntity<Set<User>> getAllUsersUnderAnOrganization(@PathVariable String organizationId) {
         log.info("getAllUsersUnderAnOrganization is called with : {}", organizationId);
         return new ResponseEntity<>(organizationService.usersUnderOrganization(organizationId), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Add User to an organization")
+    @PutMapping(path = "/{organizationId}/addUser")
+    public ResponseEntity<Organization> assignUserToAnOrganization(@PathVariable String organizationId, @RequestBody @Valid UserDTO userDTO) {
+        log.info("assignUserToAnOrganization is called with id: {} and user: {}", organizationId, userDTO);
+        return new ResponseEntity<>(organizationService.assignUserToOrganization(UserConverter.convertToEntity(userDTO), organizationId), HttpStatus.ACCEPTED);
+    }
+
+    @Operation(summary = "Remove user from the organization")
+    @PutMapping(path = "/{organizationId}/{userId}/removeUser")
+    public ResponseEntity<Organization> removeUserFromAnOrganization(@PathVariable String organizationId, @PathVariable String userId) {
+        log.info("removeUserFromAnOrganization is called with id: {} and user: {}", organizationId, userId);
+        return new ResponseEntity<>(organizationService.removeUserFromOrganization(organizationId, userId), HttpStatus.ACCEPTED);
     }
 }

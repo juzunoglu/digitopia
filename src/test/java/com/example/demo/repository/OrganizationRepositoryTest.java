@@ -155,7 +155,7 @@ public class OrganizationRepositoryTest {
 
     private Organization createOrganizationWithUser(String name, String email, String registryNumber, String phone) {
 
-        User user1 = createUser("nesrin", "nesrimn@gmail.com");
+        User user1 = createUser("nesrin", "nesrimngmail.com");
         User user2 = createUser("haktan", "haktan@gmail.com");
 
         Organization organization = Organization.builder()
@@ -180,7 +180,7 @@ public class OrganizationRepositoryTest {
                 .fullName(fullName)
                 .normalizedName(normalizeName(fullName))
                 .build();
-
-        return userService.saveUser(user);
+        return user;
+//        return userService.saveUser(user);
     }
 }

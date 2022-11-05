@@ -19,6 +19,10 @@ public interface OrganizationService {
 
     List<Organization> getAllOrganizations();
 
+    Organization assignUserToOrganization(User user, String organizationId);
+
+    Organization removeUserFromOrganization(String organizationId, String userId);
+
     Set<User> usersUnderOrganization(String organizationId);
 
     Organization findByRegistryNumber(String registryNumber);

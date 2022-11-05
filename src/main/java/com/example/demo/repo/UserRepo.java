@@ -21,5 +21,6 @@ public interface UserRepo extends JpaRepository<User, String> {
 
     List<User> findByNormalizedNameContainsIgnoreCase(String normalizedName);
 
-
+    @Query("select (count(u) > 0) from User u where u.email = ?1")
+    boolean existsByEmail(String email);
 }

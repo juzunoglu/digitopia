@@ -2,8 +2,11 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
+import com.example.demo.exception.EmailAlreadyExistsException;
+import com.example.demo.exception.RegistryNumberAlreadyExistsException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repo.OrganizationRepo;
+import com.example.demo.repo.UserRepo;
 import com.example.demo.service.OrganizationService;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +22,35 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationRepo organizationRepo;
 
-    public OrganizationServiceImpl(OrganizationRepo organizationRepo) {
+    private final UserRepo userRepo;
+
+    public OrganizationServiceImpl(OrganizationRepo organizationRepo, UserRepo userRepo) {
         this.organizationRepo = organizationRepo;
+        this.userRepo = userRepo;
     }
 
 
     @Override
-    public Organization saveOrganization(Organization organization) {
+    public synchronized Organization saveOrganization(Organization organization) {
+        checkOrganizationValid(organization);
         return organizationRepo.save(organization);
+    }
+
+    private void checkOrganizationValid(Organization organization) {
+        if (organizationRepo.existsByRegistryNumber(organization.getRegistryNumber())) {
+            throw new RegistryNumberAlreadyExistsException("Registry number is already taken: " + organization.getRegistryNumber());
+        }
+        organization.getUserSet().forEach(user -> {
+            if (userRepo.existsByEmail(user.getEmail())) {
+                throw new EmailAlreadyExistsException("Email is already taken: " + user.getEmail());
+            }
+        });
+    }
+
+    private void checkUserValid(User user) {
+        if (userRepo.existsByEmail(user.getEmail())) {
+            throw new EmailAlreadyExistsException("Email is already taken: " + user.getEmail());
+        }
     }
 
     @Override
@@ -39,17 +63,20 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public Organization updateOrganizationById(String id, Organization organization) {
+    public synchronized Organization updateOrganizationById(String id, Organization organization) {
         Organization organizationToBeUpdated = organizationRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Organization is not found"));
 
+        checkOrganizationValid(organization);
+
         organizationToBeUpdated.setName(organization.getName());
         organizationToBeUpdated.setCompanySize(organization.getCompanySize());
-        organizationToBeUpdated.setRegistryNumber(organization.getRegistryNumber()); // todo this should be unique handle that
+        organizationToBeUpdated.setRegistryNumber(organization.getRegistryNumber());
         organizationToBeUpdated.setYearFounded(organization.getYearFounded());
         organizationToBeUpdated.setUpdatedBy(organization.getId());
         organizationToBeUpdated.setUpdatedOn(LocalDateTime.now());
         organizationToBeUpdated.setContactEmail(organization.getContactEmail());
+        organization.getUserSet().forEach(organizationToBeUpdated::addUser);
 
         return organizationRepo.save(organizationToBeUpdated);
     }
@@ -64,6 +91,27 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public List<Organization> getAllOrganizations() {
         return organizationRepo.findAll();
+    }
+
+    @Override
+    public Organization assignUserToOrganization(User user, String organizationId) {
+        Organization organization = organizationRepo.findById(organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("No organization with id: " + organizationId));
+
+        checkUserValid(user);
+        organization.addUser(user);
+        return organizationRepo.save(organization);
+    }
+
+    @Override
+    public Organization removeUserFromOrganization(String organizationId, String userId) {
+        Organization organization = organizationRepo.findById(organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("No organization with id: " + organizationId));
+
+        organization.removeUser(userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("No user is found to delete: " + userId))
+        );
+        return organizationRepo.save(organization);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.example.demo.advise;
 
+import com.example.demo.exception.EmailAlreadyExistsException;
+import com.example.demo.exception.RegistryNumberAlreadyExistsException;
 import com.example.demo.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -78,6 +80,39 @@ public class GlobalControllerException extends ResponseEntityExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND,
                 "Resource Not Found",
+                details);
+
+        return ResponseEntityBuilder.build(err);
+    }
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleEmailAlreadyExistsException(
+            EmailAlreadyExistsException ex) {
+
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+
+        ApiError err = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST,
+                "Unique Key Error",
+                details);
+
+        return ResponseEntityBuilder.build(err);
+    }
+
+    @ExceptionHandler(RegistryNumberAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleRegistryNumberAlreadyExistsException(
+            RegistryNumberAlreadyExistsException ex) {
+
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+
+        ApiError err = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST,
+                "Unique Key Error",
                 details);
 
         return ResponseEntityBuilder.build(err);

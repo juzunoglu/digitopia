@@ -67,6 +67,11 @@ public class Organization extends BaseEntity {
         user.getOrganizationSet().add(this);
     }
 
+    public void removeUser(User user) {
+        this.userSet.remove(user);
+        user.getOrganizationSet().remove(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

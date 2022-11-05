@@ -3,9 +3,11 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
 import com.example.demo.entity.enums.User_Status;
+import com.example.demo.exception.EmailAlreadyExistsException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repo.UserRepo;
 import com.example.demo.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
@@ -24,7 +27,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(User user) {
+    public synchronized User saveUser(User user) {
+        if (userRepo.existsByEmail(user.getEmail())) {
+            throw new EmailAlreadyExistsException("The Email you provided is already taken");
+        }
         return userRepo.save(user);
     }
 
@@ -39,12 +45,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateByUserId(String id, User user) {
+    public synchronized User updateByUserId(String id, User user) {
         User toBeUpdated = userRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User is not found with id: " + id));
 
+        if (userRepo.existsByEmail(user.getEmail())) {
+            throw new EmailAlreadyExistsException("The Email you provided is already taken");
+        }
         toBeUpdated.setFullName(user.getFullName());
-        // todo cannot use the already existing email. they should be unique
         toBeUpdated.setEmail(user.getEmail());
         toBeUpdated.setUpdatedBy(user.getId());
         toBeUpdated.setUpdatedOn(LocalDateTime.now());

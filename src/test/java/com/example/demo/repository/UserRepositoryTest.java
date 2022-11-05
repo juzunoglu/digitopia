@@ -142,8 +142,21 @@ public class UserRepositoryTest {
     }
     private Organization createOrganizationWithUser(String name, String email, String registryNumber, String phone) {
 
-        User user1 = createUser("nesrin", "nesrimn@gmail.com");
-        User user2 = createUser("haktan", "haktan@gmail.com");
+        User user1 = User.builder()
+                .id(UUID.randomUUID().toString())
+                .status(User_Status.ACTIVE)
+                .email("haktan@gmail.com")
+                .fullName("alihan")
+                .normalizedName(normalizeName("alihan"))
+                .build();
+
+        User user2 = User.builder()
+                .id(UUID.randomUUID().toString())
+                .status(User_Status.ACTIVE)
+                .email("nesrin@gmail.com")
+                .fullName("alihan")
+                .normalizedName(normalizeName("alihan"))
+                .build();
 
         Organization organization = Organization.builder()
                 .id(UUID.randomUUID().toString())
