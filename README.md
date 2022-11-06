@@ -13,3 +13,7 @@ that explains how to handle a failed job -> https://medium.com/@roperluo.me/talk
 . I could also use Quartz since it seems simpler. https://stackoverflow.com/questions/4408858/quartz-retry-when-failure
 - The consumer class in the kafka package should be separated as another microservice. It does not really belong here, but given the time. this was the quickest solution I had came up with.
 - For normalized-search, a 'Like' based solution from the database server is not the efficient one. Depending on the significance of that feature, Redis,Solr,ElasticSearch, even Lucene could have been used.
+
+# DB design
+
+![schema](https://user-images.githubusercontent.com/38230713/200186956-e5baa247-8abb-464b-ae35-3650d3d1bb6d.png)
