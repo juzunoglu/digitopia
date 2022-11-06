@@ -1,85 +1,78 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.converter.InvitationConverter;
 import com.example.demo.entity.Invitation;
+import com.example.demo.entity.InvitationResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.enums.Invitation_Status;
 import com.example.demo.entity.enums.User_Status;
+import com.example.demo.exception.InvitationAlreadyRejectedException;
+import com.example.demo.exception.InvitationIsInPendingException;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.InvitationDTO;
+import com.example.demo.model.RespondInvitationDTO;
 import com.example.demo.repo.InvitationRepo;
+import com.example.demo.repo.InvitationResponseRepo;
 import com.example.demo.repo.UserRepo;
 import com.example.demo.service.InvitationService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-
-import static com.example.demo.entity.enums.Invitation_Status.EXPIRED;
-import static com.example.demo.entity.enums.Invitation_Status.PENDING;
-
 @Service
 @Transactional
 @Slf4j
 public class InvitationServiceImpl implements InvitationService {
-
-
     private final InvitationRepo invitationRepo;
+    private final InvitationResponseRepo invitationResponseRepo;
     private final UserRepo userRepo;
 
-    public InvitationServiceImpl(InvitationRepo invitationRepo, UserRepo userRepo) {
+    public InvitationServiceImpl(InvitationRepo invitationRepo, InvitationResponseRepo invitationResponseRepo, UserRepo userRepo) {
         this.invitationRepo = invitationRepo;
+        this.invitationResponseRepo = invitationResponseRepo;
         this.userRepo = userRepo;
     }
 
     @Override
-    public Invitation sendInvitation(Invitation invitation) {
-        User userTobeInvited = userRepo.findById(invitation.getUser().getId())
-                        .orElseThrow(() -> new ResourceNotFoundException("No user is found with id: " + invitation.getUser().getId()));
+    public Invitation inviteUser(InvitationDTO invitation) {
+        Invitation invitation1 = InvitationConverter.convertToEntity(invitation);
+        User user = userRepo.findById(invitation.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("No user is found with id: " + invitation.userId()));
 
-        userTobeInvited.setStatus(User_Status.INVITED);
-        invitation.setUser(userTobeInvited);
-        return invitationRepo.save(invitation);
-    }
-
-    @Override
-    public boolean expireInvitation(String id) {
-        Invitation invitation = invitationRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Invitation is not found with id: " + id));
-
-        invitation.setInvitationStatus(EXPIRED);
-        invitationRepo.save(invitation);
-        return true;
-    }
-
-    @Override
-    @Scheduled(cron = "0 * * * * *", zone = "UTC")
-    public void expireInvitationsJob() {
-        log.info("Job started");
-        if (invitationRepo.existsByInvitationStatus(PENDING)) {
-            int updatedEntries = invitationRepo.updateInvitationStatusByInvitationStatus(PENDING);
-            log.info("Updated entries: {}", updatedEntries);
+        if (invitationResponseRepo.existsByUser_IdAndInvitationStatus(user.getId(), Invitation_Status.PENDING)) {
+            throw new InvitationIsInPendingException("User still have not responded to the previous invitation");
         }
-        log.info("If no invitation is in pending, no need to run the sql update");
+        if (invitationResponseRepo.existsByUser_IdAndInvitationStatus(user.getId(), Invitation_Status.REJECTED)) {
+            throw new InvitationAlreadyRejectedException("User had already rejected the invitation");
+        }
+        InvitationResponse invitationResponse = InvitationResponse.builder()
+                .invitationStatus(Invitation_Status.PENDING)
+                .user(user)
+                .invitation(invitation1)
+                .build();
+
+        user.setStatus(User_Status.INVITED);
+        invitationRepo.save(invitation1);
+        invitationResponseRepo.save(invitationResponse);
+
+        return invitation1;
     }
 
     @Override
-    public Invitation getById(String id) {
-        return invitationRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Invitation is not found with id: " + id));
-    }
+    public Invitation respondToInvitation(RespondInvitationDTO respondInvitationDTO) {
+        Invitation invitation = invitationRepo.findById(respondInvitationDTO.invitationId())
+                .orElseThrow(() -> new ResourceNotFoundException("No invitation found with id: " + respondInvitationDTO.invitationId()));
+        User user = userRepo.findById(respondInvitationDTO.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("No user is found with id: " + respondInvitationDTO.userId()));
 
-    @Override
-    public List<Invitation> getAllInvitations() {
-        return invitationRepo.findAll();
-    }
+        InvitationResponse invitationResponse = InvitationResponse.builder()
+                .invitation(invitation)
+                .user(user)
+                .invitationStatus(respondInvitationDTO.response())
+                .build();
 
-    @Override
-    public Invitation rejectInvitation(String invitationId, Invitation_Status status) {
-        Invitation invitation1 = invitationRepo.findById(invitationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Invitation is not found with id: " + invitationId));
+        invitationResponseRepo.save(invitationResponse);
 
-        invitation1.setInvitationStatus(status);
-        return invitationRepo.save(invitation1);
+        return invitation;
     }
 }

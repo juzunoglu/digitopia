@@ -1,22 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Invitation;
-import com.example.demo.entity.enums.Invitation_Status;
-
-import java.util.List;
+import com.example.demo.model.InvitationDTO;
+import com.example.demo.model.RespondInvitationDTO;
 
 public interface InvitationService {
 
-    Invitation sendInvitation(Invitation invitation);
+    Invitation inviteUser(InvitationDTO invitation);
 
-    boolean expireInvitation(String id);
-
-    void expireInvitationsJob();
-
-    Invitation getById(String id);
-
-    List<Invitation> getAllInvitations();
-
-    Invitation rejectInvitation(String invitationId, Invitation_Status status);
+    Invitation respondToInvitation(RespondInvitationDTO respondInvitationDTO);
 
 }

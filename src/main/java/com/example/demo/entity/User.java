@@ -41,6 +41,12 @@ public class User extends BaseEntity {
     @Column(name = "normalized_name")
     private String normalizedName;
 
+    @OneToMany(mappedBy = "user")
+    @ToString.Exclude
+    @JsonIgnore
+    @Schema(hidden = true)
+    private Set<InvitationResponse> invitationResponses;
+
     @ManyToMany(mappedBy = "userSet", fetch = FetchType.LAZY, cascade = {
             CascadeType.MERGE,
             CascadeType.PERSIST

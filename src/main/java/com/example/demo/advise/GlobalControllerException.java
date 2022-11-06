@@ -1,9 +1,6 @@
 package com.example.demo.advise;
 
-import com.example.demo.exception.EmailAlreadyExistsException;
-import com.example.demo.exception.InvitationAlreadyRejectedException;
-import com.example.demo.exception.RegistryNumberAlreadyExistsException;
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -118,6 +115,24 @@ public class GlobalControllerException extends ResponseEntityExceptionHandler {
 
         return ResponseEntityBuilder.build(err);
     }
+
+    @ExceptionHandler(InvitationIsInPendingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleEmailAlreadyExistsException(
+            InvitationIsInPendingException ex) {
+
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+
+        ApiError err = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST,
+                "State Error",
+                details);
+
+        return ResponseEntityBuilder.build(err);
+    }
+
 
     @ExceptionHandler(RegistryNumberAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

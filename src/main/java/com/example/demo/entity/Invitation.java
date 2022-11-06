@@ -1,12 +1,13 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.enums.Invitation_Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -20,13 +21,10 @@ public class Invitation extends BaseEntity {
 
     private String message;
 
-    @Enumerated(EnumType.STRING)
-    private Invitation_Status invitationStatus;
-
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId
+    @OneToMany(mappedBy = "invitation")
     @ToString.Exclude
-    private User user;
+    @JsonIgnore
+    private Set<InvitationResponse> invitationResponses;
 
     @Override
     public boolean equals(Object o) {

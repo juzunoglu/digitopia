@@ -1,9 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.converter.UserConverter;
+import com.example.demo.entity.Invitation;
 import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
+import com.example.demo.model.RespondInvitationDTO;
 import com.example.demo.model.UserDTO;
+import com.example.demo.service.InvitationService;
 import com.example.demo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +24,11 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final InvitationService invitationService;
+
+    public UserController(UserService userService, InvitationService invitationService) {
         this.userService = userService;
+        this.invitationService = invitationService;
     }
 
     @Operation(summary = "Save a user")
@@ -81,5 +87,12 @@ public class UserController {
     public ResponseEntity<List<User>> searchByNormalizedName(@RequestParam String normalizedName) {
         log.info("searchByNormalizedName is called with: {}", normalizedName);
         return new ResponseEntity<>(userService.searchByNormalizedName(normalizedName), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Respond to an invitation")
+    @PutMapping(path = "/invitation/respond")
+    public ResponseEntity<Invitation> respondToAnInvitation(@RequestBody RespondInvitationDTO respondInvitationDTO) {
+        log.info("respondToAnInvitation is called with response: {}", respondInvitationDTO);
+        return new ResponseEntity<>(invitationService.respondToInvitation(respondInvitationDTO), HttpStatus.OK);
     }
 }
