@@ -26,7 +26,7 @@ public record UserDTO(
         String email
 ) {
 
-    public static String normalizeName(String fullName) { // todo?
+    public static String normalizeName(String fullName) {
         return Normalizer.normalize(fullName, Normalizer.Form.NFD)
                 .replaceAll("\\d", "") // remove all numbers
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase(); // remove accents

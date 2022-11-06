@@ -73,7 +73,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void updateUserByIdTest() { //todo cannot update with an already existing email! do not forget that case!
+    public void updateUserByIdTest() {
         User oldUser = createUser("nesrin", "nesrin@gmail.com");
         User newUser = User.builder().fullName("faruk").email("faruk@gmail.com").build();
 

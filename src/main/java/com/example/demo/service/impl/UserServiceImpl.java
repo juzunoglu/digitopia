@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return userRepo.findAll(); // todo do a pagination later
+        return userRepo.findAll();
     }
 
     @Override

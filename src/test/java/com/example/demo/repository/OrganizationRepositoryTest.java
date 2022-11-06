@@ -86,7 +86,7 @@ public class OrganizationRepositoryTest {
         );
     }
     @Test
-    public void updateOrganizationByIdTest() { //todo cannot update with an already existing email! do not forget that case!
+    public void updateOrganizationByIdTest() {
         Organization oldOrganization = createOrganization("amadeus", "amadeus@gmail.com", "AMB12", "+90 552 704 05 84");
         Organization newOrganization = Organization.builder()
                 .name("faruk").contactEmail("faruk@gmail.com").build();
@@ -193,6 +193,5 @@ public class OrganizationRepositoryTest {
                 .normalizedName(normalizeName(fullName))
                 .build();
         return user;
-//        return userService.saveUser(user);
     }
 }

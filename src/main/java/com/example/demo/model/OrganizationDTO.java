@@ -50,7 +50,6 @@ public record OrganizationDTO(
                 example = "+905527894854",
                 type = "string"
         )
-        // todo boşluklu tel kabul etmedi, buna bi bak fazladan slash var çok büyük ihtimalle
         @Pattern(regexp = "^\\s*(?:\\+?(\\d{1,3}))?[-. (]*(\\d{3})[-. )]*(\\d{3})[-. ]*(\\d{4})(?: *x(\\d+))?\\s*$", message = "Please enter a valid phone number")
         String phone,
 
@@ -73,7 +72,7 @@ public record OrganizationDTO(
 
 ) {
 
-    public static String normalizeCompanyName(String companyName) { // todo?
+    public static String normalizeCompanyName(String companyName) {
         return Normalizer.normalize(companyName, Normalizer.Form.NFD)
                 .replaceAll("\\d", "") // remove all numbers
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase(); // remove accents
