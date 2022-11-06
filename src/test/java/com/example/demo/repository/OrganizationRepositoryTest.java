@@ -4,6 +4,8 @@ import com.example.demo.entity.Organization;
 import com.example.demo.entity.User;
 import com.example.demo.entity.enums.User_Status;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repo.InvitationRepo;
+import com.example.demo.repo.InvitationResponseRepo;
 import com.example.demo.repo.OrganizationRepo;
 import com.example.demo.repo.UserRepo;
 import com.example.demo.service.OrganizationService;
@@ -38,16 +40,26 @@ public class OrganizationRepositoryTest {
     private UserService userService;
 
     @Autowired
+    private InvitationRepo invitationRepo;
+
+    @Autowired
+    private InvitationResponseRepo invitationResponseRepo;
+
+    @Autowired
     private UserRepo userRepo;
 
     @AfterAll
     public void clearDb() {
+        invitationResponseRepo.deleteAll();
+        invitationRepo.deleteAll();
         organizationRepo.deleteAll();
         userRepo.deleteAll();
     }
 
     @BeforeEach
     public void setUp() {
+        invitationResponseRepo.deleteAll();
+        invitationRepo.deleteAll();
         organizationRepo.deleteAll();
         userRepo.deleteAll();
     }
