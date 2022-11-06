@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class EmailProducer {
+public class Producer {
 
     private final NewTopic topic;
 
     private final KafkaTemplate<String, EMailEvent> kafkaTemplate;
 
 
-    public EmailProducer(NewTopic topic, KafkaTemplate<String, EMailEvent> kafkaTemplate) {
+    public Producer(NewTopic topic, KafkaTemplate<String, EMailEvent> kafkaTemplate) {
         this.topic = topic;
         this.kafkaTemplate = kafkaTemplate;
     }

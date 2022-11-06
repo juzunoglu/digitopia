@@ -14,16 +14,34 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         format_sql: true
 
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: 'true'
+          auth: 'true'
+    host: smtp.gmail.com
+    username: juzunoglualihan@gmail.com
+    password: ${MAIL_SENDER_TOKEN}
+    port: '587'
+
   kafka:
     topic:
       name: email_topics
 
-#    consumer:
-#      bootstrap-servers: localhost:9092
-#      group-id: email
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeSerializer
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: email
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+
 
     producer:
       bootstrap-servers: localhost:9092

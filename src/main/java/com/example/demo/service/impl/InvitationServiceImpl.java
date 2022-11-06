@@ -10,7 +10,7 @@ import com.example.demo.exception.InvitationAlreadyRejectedException;
 import com.example.demo.exception.InvitationIsInPendingException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.kafka.events.EMailEvent;
-import com.example.demo.kafka.producer.EmailProducer;
+import com.example.demo.kafka.producer.Producer;
 import com.example.demo.model.InvitationDTO;
 import com.example.demo.model.RespondInvitationDTO;
 import com.example.demo.repo.InvitationRepo;
@@ -30,13 +30,13 @@ public class InvitationServiceImpl implements InvitationService {
     private final InvitationResponseRepo invitationResponseRepo;
     private final UserRepo userRepo;
 
-    private final EmailProducer emailProducer;
+    private final Producer producer;
 
-    public InvitationServiceImpl(InvitationRepo invitationRepo, InvitationResponseRepo invitationResponseRepo, UserRepo userRepo, EmailProducer emailProducer) {
+    public InvitationServiceImpl(InvitationRepo invitationRepo, InvitationResponseRepo invitationResponseRepo, UserRepo userRepo, Producer producer) {
         this.invitationRepo = invitationRepo;
         this.invitationResponseRepo = invitationResponseRepo;
         this.userRepo = userRepo;
-        this.emailProducer = emailProducer;
+        this.producer = producer;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class InvitationServiceImpl implements InvitationService {
                 .email(user.getEmail())
                 .build();
 
-        emailProducer.sendMessage(eMailEvent);
+        producer.sendMessage(eMailEvent);
         return invitation1;
     }
 
