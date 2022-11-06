@@ -18,7 +18,6 @@ public class InvitationController {
 
     private final InvitationService invitationService;
 
-
     public InvitationController(InvitationService invitationService) {
         this.invitationService = invitationService;
     }

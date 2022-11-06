@@ -9,6 +9,8 @@ import com.example.demo.entity.enums.User_Status;
 import com.example.demo.exception.InvitationAlreadyRejectedException;
 import com.example.demo.exception.InvitationIsInPendingException;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.kafka.events.EMailEvent;
+import com.example.demo.kafka.producer.EmailProducer;
 import com.example.demo.model.InvitationDTO;
 import com.example.demo.model.RespondInvitationDTO;
 import com.example.demo.repo.InvitationRepo;
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
 @Service
 @Transactional
 @Slf4j
@@ -27,10 +30,13 @@ public class InvitationServiceImpl implements InvitationService {
     private final InvitationResponseRepo invitationResponseRepo;
     private final UserRepo userRepo;
 
-    public InvitationServiceImpl(InvitationRepo invitationRepo, InvitationResponseRepo invitationResponseRepo, UserRepo userRepo) {
+    private final EmailProducer emailProducer;
+
+    public InvitationServiceImpl(InvitationRepo invitationRepo, InvitationResponseRepo invitationResponseRepo, UserRepo userRepo, EmailProducer emailProducer) {
         this.invitationRepo = invitationRepo;
         this.invitationResponseRepo = invitationResponseRepo;
         this.userRepo = userRepo;
+        this.emailProducer = emailProducer;
     }
 
     @Override
@@ -55,6 +61,12 @@ public class InvitationServiceImpl implements InvitationService {
         invitationRepo.save(invitation1);
         invitationResponseRepo.save(invitationResponse);
 
+        EMailEvent eMailEvent = EMailEvent.builder()
+                .invitationMessage(invitation1.getMessage())
+                .email(user.getEmail())
+                .build();
+
+        emailProducer.sendMessage(eMailEvent);
         return invitation1;
     }
 
